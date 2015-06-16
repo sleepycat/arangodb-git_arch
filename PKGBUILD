@@ -4,8 +4,8 @@
 # - https://aur.archlinux.org/packages/arangodb
 # - https://aur.archlinux.org/packages/arangodb-git
 
-pkgname=arangodb
-pkgver=2015.05.25.ge1a7ae8
+pkgname=arangodb-git
+pkgver=2015.06.15.gd5f6b05
 pkgrel=1
 pkgdesc="A multi-model NoSQL database, combining key-value, document and graph data models."
 arch=("i686" "x86_64" "armv7h")
@@ -15,12 +15,20 @@ depends=("glibc" "gcc-libs" "openssl" "readline" "systemd")
 makedepends=("python2 go>=1.4")
 provides=("arangodb-git")
 conflicts=("arangodb-latest" "arangodb-git")
-backup=()
+backup=('etc/arangodb/arangob.conf'
+  'etc/arangodb/arangodump.conf'
+  'etc/arangodb/arangorestore.conf'
+  'etc/arangodb/arangod.conf/'
+  'etc/arangodb/arangoimp.conf'
+  'etc/arangodb/arangosh.conf'
+  'etc/arangodb/arango-dfdb.conf'
+  'etc/arangodb/arangoirb.conf'
+  'etc/arangodb/foxx-manager.conf'
+)
 options=()
 install=arangodb.install
-# TODO: Figure this out
-# DLAGENTS=('shallow::/usr/bin/git clone --depth 1 %u')
-source=("git+https://github.com/arangodb/arangodb.git" "arangodb.service")
+# TODO: There really should be a way to do a shallow clone here:
+source=("${pkgname%-git}::git+https://github.com/arangodb/arangodb.git" "arangodb.service")
 sha256sums=('SKIP'
 'd4bf2ba13ac8a66cec3c8c94bc74c474513ef4aa3973f01d0b3a9fbba7596123')
 
