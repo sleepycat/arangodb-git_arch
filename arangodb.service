@@ -1,0 +1,41 @@
+# Description:
+#
+#  Used to start ArangoDB
+#
+#  ArangoDB is a native multi-model database with flexible data models for
+#  documents, graphs, and key-values. Build high performance applications
+#  using a convenient SQL-like query language or JavaScript extensions.
+#  Use ACID transactions if you require them. Scale horizontally with a
+#  few mouse clicks.
+#
+#  https://www.arangodb.com/
+#
+
+[Unit]
+Description=ArangoDB
+After=syslog.target network.target
+
+[Service]
+# TODO: explore these security options
+# CapabilityBoundingSet=
+# PrivateTmp=true
+# PrivateDevices=true
+# ProtectSystem=full
+# ProtectHome=true
+# NoNewPrivileges=true
+Type=forking
+User=arangodb
+Group=arangodb
+PIDFile=/var/run/arangodb/arangod.pid
+# Run ExecStartPre with root-permissions
+PermissionsStartOnly=true
+# ExecStartPre run sequentially
+ExecStartPre=/usr/bin/chown -R arangodb:arangodb /var/log/arangodb
+ExecStartPre=/usr/bin/chown -R arangodb:arangodb /var/lib/arangodb
+RuntimeDirectory=arangodb
+RuntimeDirectoryMode=0755
+ExecStart=/usr/bin/arangod -c /etc/arangodb/arangod.conf --pid-file /var/run/arangodb/arangod.pid --supervisor
+
+
+[Install]
+WantedBy=multi-user.target
