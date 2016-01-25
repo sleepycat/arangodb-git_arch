@@ -16,14 +16,14 @@ makedepends=("python2 go>=1.4")
 provides=("arangodb-git")
 conflicts=("arangodb-latest" "arangodb-git")
 backup=('etc/arangodb/arangob.conf'
-  'etc/arangodb/arangodump.conf'
-  'etc/arangodb/arangorestore.conf'
-  'etc/arangodb/arangod.conf/'
-  'etc/arangodb/arangoimp.conf'
-  'etc/arangodb/arangosh.conf'
-  'etc/arangodb/arango-dfdb.conf'
-  'etc/arangodb/arangoirb.conf'
-  'etc/arangodb/foxx-manager.conf'
+'etc/arangodb/arangodump.conf'
+'etc/arangodb/arangorestore.conf'
+'etc/arangodb/arangod.conf/'
+'etc/arangodb/arangoimp.conf'
+'etc/arangodb/arangosh.conf'
+'etc/arangodb/arango-dfdb.conf'
+'etc/arangodb/arangoirb.conf'
+'etc/arangodb/foxx-manager.conf'
 )
 options=()
 install=arangodb.install
