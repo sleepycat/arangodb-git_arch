@@ -6,6 +6,10 @@
 
 pkgname=arangodb-git
 pkgver=2015.06.15.gd5f6b05
+pkgver() {
+  cd arangodb
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
 pkgrel=1
 pkgdesc="A multi-model NoSQL database, combining key-value, document and graph data models."
 arch=("i686" "x86_64" "armv7l" "armv7h")
