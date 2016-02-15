@@ -41,7 +41,6 @@ build() {
   ln -s -f /usr/bin/python2 python
   export PATH="`pwd`:$PATH"
 
-  # TODO find out what good flags for production are.
   export CFLAGS="-g -O2"
   export CXXFLAGS="-g -O2 -Wno-error=strict-overflow"
 
