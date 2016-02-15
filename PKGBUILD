@@ -31,8 +31,11 @@ backup=('etc/arangodb/arangob.conf'
 )
 options=()
 install=arangodb.install
-# TODO: There really should be a way to do a shallow clone here:
-source=("${pkgname%-git}::git+https://github.com/arangodb/arangodb.git" "arangodb.service")
+# redefining the https download agent allows us to do a shallow clone
+# TODO: downloading into src feels pretty hacky. Somehow makepkg is
+# failing to mv the downloaded source into src
+DLAGENTS=('https::/usr/bin/git clone -b devel --single-branch --depth 1 %u src/arangodb')
+source=("https://github.com/arangodb/arangodb.git" "arangodb.service")
 sha256sums=('SKIP'
 'd4bf2ba13ac8a66cec3c8c94bc74c474513ef4aa3973f01d0b3a9fbba7596123')
 
