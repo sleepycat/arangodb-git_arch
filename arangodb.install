@@ -1,47 +1,54 @@
-pre_install() {
-  #TODO: id -g arangodb
-  getent group arangodb >/dev/null || groupadd -r arangodb
-  #TODO: id -u arangodb
-  getent passwd arangodb >/dev/null || useradd -r -g arangodb -d \
-  /usr/share/arangodb -s /bin/false -c "ArangoDB Application User" \
-  arangodb
-
-  #TODO: shouldn't these permissions be 700?
-  install -o arangodb -g arangodb -m 755 -d /var/lib/arangodb
-  install -o arangodb -g arangodb -m 755 -d /var/lib/arangodb-apps
-  install -o arangodb -g arangodb -m 755 -d /var/log/arangodb
-  install -o arangodb -g arangodb -m 755 -d /var/run/arangodb
-}
-
 post_install() {
 
-  chown -R arangodb:arangodb /var/lib/arangodb &> /dev/null
-  chown -R arangodb:arangodb /var/lib/arangodb-apps &> /dev/null
-  chown -R arangodb:arangodb /var/log/arangodb &> /dev/null
+  chown -R arangodb:arangodb "/var/lib/arangodb3" &> /dev/null
+  chown -R arangodb:arangodb "/var/lib/arangodb3-apps" &> /dev/null
+  chown -R arangodb:arangodb "/var/log/arangodb3" &> /dev/null
 
   cat <<-EOF
 
   Welcome to ArangoDB.
 
-  To get started you will need to enable and start the service:
+  To get started you will need to tell systemd to reload it's unit
+  files, then enable and start the service:
 
-   sudo systemctl enable arangodb.service
-   sudo systemctl start arangodb.service
+   sudo systemctl daemon-reload
+   sudo systemctl enable arangodb3.service
+   sudo systemctl start arangodb3.service
 
-  Then you can access the administrative interface at:
+  ArangoDB 3 ships with authentication enabled. To use it you will need
+  to start the server with 'authentication = false' in the following
+  files:
+
+    /etc/arangodb3/arangosh.conf
+    /etc/arangodb3/arangod.conf
+
+  Then set the passwords and create the users you need:
+
+    $> arangosh
+    127.0.0.1:8529@_system> require("org/arangodb/users").update("root",
+    "mypassword")
+    127.0.0.1:8529@_system> require("org/arangodb/users").save("myuser",
+    "mypassword");
+
+  Set the 'authentication = true' and then restart ArangoDB:
+
+   sudo systemctl restart arangodb3.service
+
+  You can now use your username and password to access the
+  administrative interface at:
 
     http://localhost:8529
 
-    or try things out at the shell:
+  ArangoDB now works with logrotate:
 
-    $> arangosh
+     sudo logrotate /etc/logrotate.d/arangodb3
+
 
   Getting help:
     http://stackoverflow.com/questions/tagged/arangodb
-    https://groups.google.com/forum/#!forum/arangodb
-    https://docs.arangodb.com/cookbook/
-    https://docs.arangodb.com/
-    #arangodb on irc.freenode.net
+    https://arangodb-community.slack.com
+    https://docs.arangodb.com/cookbook
+    https://docs.arangodb.com
 
 EOF
 }
@@ -49,30 +56,26 @@ EOF
 post_upgrade() {
   cat <<-EOF
 
-  The format of some of ArangoDB's internal files change sometimes
-  between versions. To upgrade existing data files run /usr/bin/arangod
-  with the upgrade option:
+  ArangoDB has been upgraded to $1.
 
-    sudo systemctl stop arangodb.service
-    sudo arangod --upgrade
-    sudo systemctl start arangodb.service
-
-  Take a look at the Changelog to see what is new in $1:
+  Take a look at the Changelog to see what is new:
   https://github.com/arangodb/arangodb/blob/devel/CHANGELOG
+
 EOF
 }
 
 pre_remove() {
-  systemctl stop arangodb.service &> /dev/null
+  systemctl stop arangodb3.service &> /dev/null
 }
 
 post_remove() {
-  userdel arangodb &> /dev/null
-  groupdel arangodb &> /dev/null
-  # remove all the files
-  rm -rf /usr/share/arangodb/js/apps
-  rm -rf /var/log/arangodb
-  rm -rf /var/lib/arangodb
-  rm -rf /var/lib/arangodb-apps
-  rm -rf /var/run/arangodb
+  cat <<-EOF
+
+  ArangoDB has been uninstalled.
+
+  Any data you had stored in ArangoDB is still available in /var/lib/arangodb3.
+  Installed Foxx applications are still available in /var/lib/arangodb3-apps.
+  Log files are left in /var/log/arangodb3.
+
+EOF
 }
