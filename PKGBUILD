@@ -5,7 +5,7 @@
 # - https://aur.archlinux.org/packages/arangodb-git
 
 pkgname=arangodb-git
-pkgver=r40825.3d0644cb4a
+pkgver=r40946.0eaf4cabd9
 pkgver() {
   cd "$srcdir/arangodb"
   printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
