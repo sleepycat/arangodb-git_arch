@@ -5,7 +5,7 @@
 # - https://aur.archlinux.org/packages/arangodb-git
 
 pkgname=arangodb-git
-pkgver=r40946.0eaf4cabd9
+pkgver=r43378.0d048c7659
 pkgver() {
   cd "$srcdir/arangodb"
   printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
@@ -16,7 +16,7 @@ arch=("i686" "x86_64")
 url="https://www.arangodb.com/"
 license=('APACHE')
 depends=('openssl' 'systemd' 'curl' 'zlib')
-makedepends=("cmake" "python2" "gcc5" "linux-api-headers")
+makedepends=("cmake" "python2" "gcc7" "linux-api-headers")
 provides=("arangodb")
 options=()
 install=arangodb.install
@@ -34,21 +34,19 @@ build() {
   ln -s -f /usr/bin/python2 python
   export PATH="`pwd`:$PATH"
   export LD="ld.gold"
-  export CC="gcc-5"
-  export CXX="/usr/bin/g++-5"
+  export CC="gcc-7"
+  export CXX="g++-7"
 
   msg2 "Configuring ArangoDB."
   cd "$srcdir"/arangodb
   [ -d build ] || mkdir build && cd build
   cmake -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_C_FLAGS="-O3 -fno-omit-frame-pointer" \
-    -DCMAKE_CXX_FLAGS="-O3 -fno-omit-frame-pointer" \
     -DCMAKE_INSTALL_PREFIX:PATH=/ \
     -DCMAKE_SKIP_RPATH=On \
     ..
   msg2 "Building ArangoDB."
-  make -j $(nproc)
+  make
 }
 
 package() {
